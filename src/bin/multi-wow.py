@@ -7,6 +7,7 @@ from multiwow.listeners.kblistener import KeyboardListener
 from multiwow.config import Config
 
 def loglevel_validator(v):
+    """Validate selected log level. Return v.upper() or raise an error."""
     if v.upper() not in ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']:
         raise argparse.ArgumentTypeError('Log level must be a valid Python ' +
                                          'log level. See -h for details.')

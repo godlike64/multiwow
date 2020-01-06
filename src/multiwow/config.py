@@ -6,6 +6,12 @@ import logging
 from multiwow.constants import CONFIG_DIR, CONFIG_FILE
 
 class Config(object):
+    """Helper class to handle ConfigParser.
+    
+    This class creates the necessary directory/files needed for multiwow to 
+    work properly. If the configuration file does not exist, a default one is 
+    created.
+    """
     
     def __init__(self):
         self.logger = logging.getLogger('multiwow')
@@ -20,6 +26,7 @@ class Config(object):
         self.parse_config()
         
     def create_config(self):
+        """Create a default configuration file."""
         self.cp = configparser.ConfigParser(allow_no_value=True)
         self.cp['keys'] = dict()
         self.cp['keys']['start broadcast'] = f'g'
@@ -42,10 +49,12 @@ class Config(object):
             self.logger.info(f'Writing default config file at {CONFIG_FILE}.')
     
     def parse_config(self):
+        """Parse the existing configuration file."""
         self.cp = configparser.ConfigParser()
         self.cp.read(CONFIG_FILE)
 
     def config_dump(self):
+        """Dump the configuration file contents to the log."""
         self.logger.debug(f'Dumping configuration file:')
         for section in self.cp.sections():
             self.logger.debug(f'- {section}')
