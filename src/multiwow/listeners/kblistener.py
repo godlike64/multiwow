@@ -188,10 +188,10 @@ class KeyboardListener:
             self.next_window()
             return
         for id in ids:
-            if self.broadcast or f'{char}' == f'f':
+            if self.broadcast or f'{char}' == self.config['keys']['stop broadcast']:
                 self.logger.debug(f'Sending keydown {char} to {id}')
                 run_cmd(f'xdotool keydown --window {id} {self.modifier}{char}')
-        if f'{char}' == f'f':
+        if f'{char}' == self.config['keys']['stop broadcast']:
             self.send_keyup(char, ids)
 
     def send_keyup(self, char, ids):
@@ -203,7 +203,7 @@ class KeyboardListener:
         depressed.
         """
         for id in ids:
-            if self.broadcast:
+            if self.broadcast or f'{char}' == self.config['keys']['stop broadcast']:
                 self.logger.debug(f'Sending keyup {char} to {id}')
                 run_cmd(f'xdotool keyup --window {id} {self.modifier}{char}')
         if f'{char}' == self.config['keys']['stop broadcast']:
