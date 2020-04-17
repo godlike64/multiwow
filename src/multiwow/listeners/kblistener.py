@@ -80,9 +80,8 @@ class KeyboardListener:
         if id in self.wl:
             return self.wl.index(id)
         else:
-            self.logger.warning(f'Current focus is not on any window, '
-                                'defaulting to focus on master.')
-            return 0
+            self.logger.warning(f'Current focus is not on any window.')
+            return -1
     
     def next_window(self):
         """Switch to the next window in the list."""
@@ -136,7 +135,7 @@ class KeyboardListener:
     def on_press(self, key):
         """Handle key presses."""
         char = self.process_key(key)
-        if char:
+        if char and self.get_current_focus() != -1:
             if char == self.config['keys']['stop program']:
                 # Stop listener
                 self.logger.info('Escape key detected. Stopping normally.')
@@ -157,7 +156,7 @@ class KeyboardListener:
     def on_release(self, key):
         """Handle key releases."""
         char = self.process_key(key)
-        if char:
+        if char and self.get_current_focus() != -1:
             if char in self.comb:
                 self.logger.debug(f'Removing {char} and all modifiers from modifier list.')
                 self.modifier = ''
@@ -184,7 +183,7 @@ class KeyboardListener:
         if char in self.arrows:
             self.logger.debug(f'Ignoring keydown of arrow {char}')
         if f'{self.modifier}{char}' == self.config['keys']['next window']:
-            self.clear_modifiers()
+            #self.clear_modifiers()
             self.next_window()
             return
         for id in ids:

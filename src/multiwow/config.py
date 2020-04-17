@@ -32,7 +32,7 @@ class Config(object):
         self.cp['keys']['start broadcast'] = f'g'
         self.cp['keys']['stop broadcast'] = f'f'
         self.cp['keys']['stop program'] = f'Escape'
-        self.cp['keys']['next window'] = f'super+1'
+        self.cp['keys']['next window'] = f'r'
         self.cp['commands'] = dict()
         self.cp['commands']['window ids'] = "xwininfo -int -children -id {id}|grep 1920x1080|cut -d' ' -f6"
         self.cp['commands']['master window'] = f'master_'
