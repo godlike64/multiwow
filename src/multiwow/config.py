@@ -2,6 +2,7 @@ import os
 import configparser
 import sys
 import logging
+from pathlib import Path
 
 from multiwow.constants import CONFIG_DIR, CONFIG_FILE
 
@@ -13,14 +14,19 @@ class Config(object):
     created.
     """
     
-    def __init__(self):
+    def __init__(self, config_file):
         self.logger = logging.getLogger('multiwow')
-        if not os.path.exists(CONFIG_DIR):
-            self.logger.warning(f'Configuration directory {CONFIG_DIR} '
+        self.config_file=Path(config_file)
+        if '~' in str(self.config_file.parent):
+            target_dir = self.config_file.parent.expanduser()
+        else:
+            target_dir = self.config_file.parent
+        if not os.path.exists(target_dir):
+            self.logger.warning(f'Configuration directory {target_dir} '
                               'does not exist. Creating.')
-            os.makedirs(CONFIG_DIR)
-        if not os.path.exists(CONFIG_FILE):
-            self.logger.warning(f'Configuration file {CONFIG_FILE} does not '
+            os.makedirs(self.config_file.parent)
+        if not os.path.exists(self.config_file):
+            self.logger.warning(f'Configuration file {self.config_file} does not '
                               'exist. Creating.')
             self.create_config()
         self.parse_config()
@@ -37,7 +43,7 @@ class Config(object):
         self.cp['commands']['window ids'] = "xwininfo -int -children -id {id}|grep 1920x1080|cut -d' ' -f6"
         self.cp['commands']['master window'] = f'master_'
         self.cp['commands']['slave windows'] = f'Wow_'
-        with open(CONFIG_FILE, 'w') as configfile:
+        with open(self.config_file, 'w') as configfile:
             configfile.write('# This is multiwow\'s default configuration ' +
                 'file. It is an example config \n' +
                 '# automatically generated due to no config file found.\n' +
@@ -46,16 +52,16 @@ class Config(object):
             configfile.write('# More information can be found in the ' +
                              'project\'s README file.\n\n\n')
             self.cp.write(configfile)
-            self.logger.info(f'Writing default config file at {CONFIG_FILE}.')
+            self.logger.info(f'Writing default config file at {self.config_file}.')
     
     def parse_config(self):
         """Parse the existing configuration file."""
         self.cp = configparser.ConfigParser()
-        self.cp.read(CONFIG_FILE)
+        self.cp.read(self.config_file)
 
     def config_dump(self):
         """Dump the configuration file contents to the log."""
-        self.logger.debug(f'Dumping configuration file:')
+        self.logger.debug(f'Dumping configuration file {self.config_file}:')
         for section in self.cp.sections():
             self.logger.debug(f'- {section}')
             for key in self.cp[section]:

@@ -5,6 +5,8 @@ import logging
 
 from multiwow.listeners.kblistener import KeyboardListener
 from multiwow.config import Config
+from multiwow.constants import CONFIG_DIR, CONFIG_FILE
+
 
 def loglevel_validator(v):
     """Validate selected log level. Return v.upper() or raise an error."""
@@ -23,6 +25,12 @@ if __name__ == '__main__':
                         help='Define wow-multibox\'s log level. Can be any of' +
                         ' Python\'s standard log levels: CRITICAL, ERROR, ' +
                         'WARNING, INFO, DEBUG.')
+    parser.add_argument('-c', '--config',
+                        metavar='config',
+                        default=CONFIG_FILE,
+                        help='Optional path to a configuration file. If the' +
+                        ' file does not exist, it will be created with' +
+                        ' default values.')
     args = parser.parse_args()
     try:
         if args.log_level == 'DEBUG':
@@ -33,7 +41,7 @@ if __name__ == '__main__':
         logging.basicConfig(level=args.log_level, format=logformat)
         logger = logging.getLogger('multiwow')
         logger.info('Starting')
-        config = Config()
+        config = Config(args.config)
         config.config_dump()
         kl = KeyboardListener(config)
         kl.start()
